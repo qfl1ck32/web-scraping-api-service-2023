@@ -7,9 +7,10 @@ import {
 } from '@nestjs/common';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
 
+import { WebsiteCouldNotBeReachedException } from '../browser/exceptions/website-could-not-be-reached';
+
 import { ScrapeDto } from './dto/scrape.dto';
-import { WebsiteCouldNotBeReachedException } from './exceptions/website-could-not-be-reached';
-import { ScrapedContent } from './scraper.defs';
+import { Article } from './scraper.defs';
 import { ScraperService } from './scraper.service';
 
 @ApiTags('Scraper')
@@ -20,7 +21,7 @@ export class ScraperController {
   @ApiResponse({
     status: 200,
     description: 'The scraper was successful.',
-    type: [ScrapedContent],
+    type: [Article],
   })
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
