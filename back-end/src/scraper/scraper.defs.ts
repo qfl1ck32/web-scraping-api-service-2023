@@ -6,4 +6,10 @@ export class ScrapedContent {
 
   @ApiProperty()
   short_description: string;
+
+  @ApiProperty()
+  href: string;
+
+  @ApiProperty()
+  image: string;
 }

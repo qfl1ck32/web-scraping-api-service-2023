@@ -27,6 +27,12 @@ export class ScraperService {
     }
   }
 
+  private resolveUrl(baseUrl: string, relativeUrl: string) {
+    const url = new URL(relativeUrl, baseUrl);
+
+    return url.toString();
+  }
+
   public async scrape(url: string) {
     const results: ScrapedContent[] = [];
 
@@ -39,14 +45,20 @@ export class ScraperService {
       const card = $(element);
 
       const content = $(card).find('div > div:nth-of-type(2)');
-
       const title = $(content).find('a').text();
-
       const shortDescription = $(content).find('div').text();
+
+      const anchor = $(card).find('a');
+      const image = $(anchor).find('img');
+
+      const href = $(anchor).attr('href');
+      const src = $(image).attr('src');
 
       results.push({
         title,
         short_description: shortDescription,
+        href: this.resolveUrl(url, href),
+        image: this.resolveUrl(url, src),
       });
     });
 
