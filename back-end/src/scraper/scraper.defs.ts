@@ -4,6 +4,8 @@ import * as cheerio from 'cheerio';
 export class InnerCardContent {
   longDescription: string;
 
+  words: number;
+
   constructor(data: InnerCardContent) {
     Object.assign(this, data);
   }
@@ -52,9 +54,12 @@ export class Article {
   @ApiProperty()
   sentiment: string;
 
+  @ApiProperty()
+  words: number;
+
   constructor(data: Article) {
     Object.assign(this, data);
   }
 }
 
-export type Card = cheerio.Cheerio<cheerio.Element>;
+export type PageContent = cheerio.Cheerio<cheerio.Element>;

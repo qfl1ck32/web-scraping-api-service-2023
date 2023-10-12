@@ -4,7 +4,12 @@ import * as cheerio from 'cheerio';
 import { BrowserService } from '@src/browser/browser.service';
 import { SentimentAnalysisService } from '@src/sentiment-analysis/sentiment-analysis.service';
 
-import { InnerCardContent, Article, Publisher, Card } from './scraper.defs';
+import {
+  InnerCardContent,
+  Article,
+  Publisher,
+  PageContent,
+} from './scraper.defs';
 
 @Injectable()
 export class ScraperService {
@@ -111,7 +116,7 @@ export class ScraperService {
    */
   private scrapeHrefAndImage(
     baseUrl: string,
-    card: Card,
+    card: PageContent,
   ): {
     href: string;
     image: string;
@@ -134,14 +139,17 @@ export class ScraperService {
    * @param card - The card element.
    * @returns An Article object.
    */
-  private async processCard(baseUrl: string, card: Card): Promise<Article> {
+  private async processCard(
+    baseUrl: string,
+    card: PageContent,
+  ): Promise<Article> {
     const { title, shortDescription } =
       this.scrapeTitleAndShortDescription(card);
     const { date, category } = this.scrapeDateAndCategory(card);
     const publisher = this.scrapePublisher(baseUrl, card);
     const { href, image } = this.scrapeHrefAndImage(baseUrl, card);
 
-    const { longDescription } = await this.scrapeInnerContent(href);
+    const { longDescription, words } = await this.scrapeInnerContent(href);
 
     const sentiment = this.sentimentAnalysisService.analyze(longDescription);
 
@@ -152,10 +160,46 @@ export class ScraperService {
       publisher,
       category,
       long_description: longDescription,
+      words,
       sentiment,
       href,
       image,
     });
+  }
+
+  /**
+   * Extracts and formats the description from the provided content.
+   * @param content - The HTML content.
+   * @returns Both the splitted and formatted description.
+   */
+  private extractDescription(content: PageContent): {
+    splitted: string;
+    formatted: string;
+  } {
+    const descriptionHtml = content.find('> div:nth-of-type(3)').html();
+
+    const splittedDescription = descriptionHtml
+      .replace(/<\/div>/gi, '\n')
+      .replace(/<\/li>/gi, '\n');
+
+    const formattedDescription = splittedDescription.replace(/<li>/gi, '• ');
+
+    return {
+      splitted: cheerio.load(splittedDescription).text(),
+      formatted: cheerio.load(formattedDescription).text(),
+    };
+  }
+
+  /**
+   * Counts words in the provided text.
+   * @param text - The text to count words from.
+   * @returns Count of words in the text.
+   */
+  private countWords(text: string): number {
+    return text
+      .split('\n')
+      .flatMap((line) => line.split(/\s+/))
+      .filter((word) => word.length).length;
   }
 
   /**
@@ -171,16 +215,13 @@ export class ScraperService {
       'div > div > div > div > div:nth-of-type(2) > div:first-child',
     );
 
-    const descriptionHtml = $(content).find('> div:nth-of-type(3)').html();
-    const formattedDescription = descriptionHtml
-      .replace(/<\/div>/gi, '\n')
-      .replace(/<li>/gi, '• ')
-      .replace(/<\/li>/gi, '\n');
-
-    const cleanDescription = cheerio.load(formattedDescription).root().text();
+    const { splitted: splittedDescription, formatted: formattedDescription } =
+      this.extractDescription(content);
+    const words = this.countWords(splittedDescription);
 
     return new InnerCardContent({
-      longDescription: cleanDescription,
+      longDescription: formattedDescription.trim(),
+      words: words,
     });
   }
 }
