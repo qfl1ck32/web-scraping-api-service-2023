@@ -1,7 +1,7 @@
 export enum Sentiment {
-  POSITIVE = 'POSITIVE',
-  NEGATIVE = 'NEGATIVE',
-  NEUTRAL = 'NEUTRAL',
+  POSITIVE = 'positive',
+  NEGATIVE = 'negative',
+  NEUTRAL = 'neutral',
 }
 
 export type TokenizedText = { token: string; index: number }[];
