@@ -28,7 +28,7 @@ export class ScraperController {
     description: 'The URL could not be resolved.',
   })
   @Post()
-  async scrape(@Body() dto: ScrapeDto) {
+  async scrape(@Body() dto: ScrapeDto): Promise<Article[]> {
     try {
       const result = await this.scraperService.scrape(dto.url);
 

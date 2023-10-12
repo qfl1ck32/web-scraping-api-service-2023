@@ -3,15 +3,20 @@ import * as puppeteer from 'puppeteer';
 
 import { WebsiteCouldNotBeReachedException } from './exceptions/website-could-not-be-reached';
 
+/**
+ * A service to interact with web browsers using Puppeteer.
+ * @class
+ */
 @Injectable()
 export class BrowserService {
   /**
+   * Fetches the HTML content of a given URL using Puppeteer.
    *
-   * @param url the URL of the page to get the HTML of
-   * @throws WebsiteCouldNotBeReachedException
-   * @returns the HTML of the page at the given URL
+   * @param {string} url - The URL of the website to fetch its HTML content.
+   * @returns {Promise<string>} A promise that resolves to the HTML content of the website.
+   * @throws {WebsiteCouldNotBeReachedException} Throws an exception if the website cannot be reached or other Puppeteer errors.
    */
-  public async getHtml(url: string) {
+  public async getHtml(url: string): Promise<string> {
     try {
       const browser = await puppeteer.launch({
         headless: 'new',
