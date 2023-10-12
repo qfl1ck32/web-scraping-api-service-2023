@@ -1,6 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 
 import { BrowserModule } from '@src/browser/browser.module';
+import { SentimentAnalysisModule } from '@src/sentiment-analysis/sentiment-analysis.module';
 
 import { ScraperService } from './scraper.service';
 
@@ -9,7 +10,7 @@ describe('ScraperService', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      imports: [BrowserModule],
+      imports: [BrowserModule, SentimentAnalysisModule],
       providers: [ScraperService],
     }).compile();
 

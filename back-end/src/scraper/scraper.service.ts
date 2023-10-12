@@ -2,12 +2,16 @@ import { Injectable } from '@nestjs/common';
 import * as cheerio from 'cheerio';
 
 import { BrowserService } from '@src/browser/browser.service';
+import { SentimentAnalysisService } from '@src/sentiment-analysis/sentiment-analysis.service';
 
 import { InnerCardContent, Article, Publisher, Card } from './scraper.defs';
 
 @Injectable()
 export class ScraperService {
-  constructor(protected readonly browserService: BrowserService) {}
+  constructor(
+    protected readonly browserService: BrowserService,
+    protected readonly sentimentAnalysisService: SentimentAnalysisService,
+  ) {}
 
   private resolveUrl(base: string, relativeUrl: string) {
     const url = new URL(relativeUrl, base);
@@ -18,7 +22,7 @@ export class ScraperService {
    *
    * @param url the URL of the page to scrape
    * @throws WebsiteCouldNotBeReachedException
-   * @returns the scraped content
+   * @returns the scraped content as Article[]
    */
   public async scrape(url: string): Promise<Article[]> {
     const html = await this.browserService.getHtml(url);
@@ -35,7 +39,10 @@ export class ScraperService {
 
   private scrapeTitleAndShortDescription(
     card: cheerio.Cheerio<cheerio.Element>,
-  ) {
+  ): {
+    title: string;
+    shortDescription: string;
+  } {
     const content = card.find('div > div:nth-of-type(2)');
 
     const title = content.find('a').text();
@@ -44,7 +51,10 @@ export class ScraperService {
     return { title, shortDescription };
   }
 
-  private scrapeDateAndCategory(card: cheerio.Cheerio<cheerio.Element>) {
+  private scrapeDateAndCategory(card: cheerio.Cheerio<cheerio.Element>): {
+    date: string;
+    category: string;
+  } {
     const content = card.find('> div > div:first-child');
 
     const date = content.find('time').text();
@@ -56,7 +66,7 @@ export class ScraperService {
   private scrapePublisher(
     baseUrl: string,
     card: cheerio.Cheerio<cheerio.Element>,
-  ) {
+  ): Publisher {
     const content = card.find('> div > div:nth-of-type(3)');
 
     const relativeImage = content.find('img').attr('src');
@@ -72,7 +82,13 @@ export class ScraperService {
     });
   }
 
-  private scrapeHrefAndImage(baseUrl: string, card: Card) {
+  private scrapeHrefAndImage(
+    baseUrl: string,
+    card: Card,
+  ): {
+    href: string;
+    image: string;
+  } {
     const anchor = card.find('a');
     const image = anchor.find('img');
 
@@ -92,7 +108,9 @@ export class ScraperService {
     const publisher = this.scrapePublisher(baseUrl, card);
     const { href, image } = this.scrapeHrefAndImage(baseUrl, card);
 
-    const innerContent = await this.scrapeInnerContent(href);
+    const { longDescription } = await this.scrapeInnerContent(href);
+
+    const sentiment = this.sentimentAnalysisService.analyze(longDescription);
 
     return new Article({
       title,
@@ -100,7 +118,8 @@ export class ScraperService {
       date,
       publisher,
       category,
-      long_description: innerContent.longDescription,
+      long_description: longDescription,
+      sentiment,
       href,
       image,
     });

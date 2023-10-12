@@ -49,6 +49,9 @@ export class Article {
   @ApiProperty()
   image: string;
 
+  @ApiProperty()
+  sentiment: string;
+
   constructor(data: Article) {
     Object.assign(this, data);
   }

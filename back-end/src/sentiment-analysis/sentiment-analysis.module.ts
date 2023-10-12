@@ -4,5 +4,6 @@ import { SentimentAnalysisService } from './sentiment-analysis.service';
 
 @Module({
   providers: [SentimentAnalysisService],
+  exports: [SentimentAnalysisService],
 })
 export class SentimentAnalysisModule {}
