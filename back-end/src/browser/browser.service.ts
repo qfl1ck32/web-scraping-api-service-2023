@@ -35,4 +35,26 @@ export class BrowserService {
       throw new WebsiteCouldNotBeReachedException(); // for simplicity, assume that this is the only error that can be thrown
     }
   }
+
+  public async getScreenshot(url: string): Promise<Buffer> {
+    try {
+      const browser = await puppeteer.launch({
+        headless: 'new',
+      });
+
+      const page = await browser.newPage();
+
+      await page.setViewport({ width: 1280, height: 800 });
+
+      await page.goto(url, { waitUntil: 'networkidle2' });
+
+      const screenshot = await page.screenshot({ fullPage: true });
+
+      await browser.close();
+
+      return screenshot;
+    } catch (err) {
+      throw new WebsiteCouldNotBeReachedException(); // for simplicity, assume that this is the only error that can be thrown
+    }
+  }
 }
