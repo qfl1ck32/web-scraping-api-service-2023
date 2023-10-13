@@ -2,6 +2,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { SubmitHandler, useForm } from "react-hook-form";
 import * as yup from "yup";
 
+import { Button } from "@app/components/Button/Button.component";
 import { PageLoader } from "@app/components/PageLoader/PageLoader.component";
 
 import { schema } from "./schema";
@@ -44,7 +45,7 @@ export const ScraperForm: React.FC<IScraperFormProps> = ({
       </div>
 
       <div>
-        <button
+        <Button
           type="submit"
           className={`w-full p-3 rounded-lg text-lg font-medium transition duration-200 ${
             isButtonDisabled
@@ -54,7 +55,7 @@ export const ScraperForm: React.FC<IScraperFormProps> = ({
           disabled={isButtonDisabled}
         >
           {isLoading ? "Loading..." : "Scrape!"}
-        </button>
+        </Button>
       </div>
     </form>
   );

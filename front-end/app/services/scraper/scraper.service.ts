@@ -21,4 +21,12 @@ export class ScraperService implements IScraperService {
 
     return response.data;
   }
+
+  async getScreenshot(url: string): Promise<string> {
+    const response = await axios.post(`${this.apiUrl}/browser/screenshot`, {
+      url,
+    });
+
+    return response.data;
+  }
 }

@@ -14,7 +14,7 @@ function App({ Component, pageProps }: AppProps) {
     <Fragment>
       <ToastContainer
         {...{
-          autoClose: 2000,
+          autoClose: 1500,
           position: "bottom-right",
         }}
       />
