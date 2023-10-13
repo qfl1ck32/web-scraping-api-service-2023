@@ -11,13 +11,10 @@ export type OnSubmit = SubmitHandler<yup.InferType<typeof schema>>;
 export interface IScraperFormProps {
   onSubmit: OnSubmit;
   isLoading: boolean;
-
-  data?: unknown;
 }
 
 export const ScraperForm: React.FC<IScraperFormProps> = ({
   onSubmit,
-  data,
   isLoading,
 }) => {
   const { register, handleSubmit, formState } = useForm({
