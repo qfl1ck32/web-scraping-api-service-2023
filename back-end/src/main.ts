@@ -1,4 +1,5 @@
 import { ValidationPipe } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 
 import { AppModule } from './app.module';
@@ -11,7 +12,10 @@ async function bootstrap() {
 
   setupSwagger(app);
 
-  await app.listen(8080);
+  const configService = app.get(ConfigService);
+  const ip = configService.getOrThrow('app.ip');
+  const port = configService.getOrThrow('app.port');
+  await app.listen(port, ip);
 }
 
 bootstrap();
