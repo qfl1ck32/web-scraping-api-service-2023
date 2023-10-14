@@ -106,7 +106,7 @@ Got it! Here's the more concise and README-style section:
 
 - **Fire it Up:**
   - In the `frontend/`, kick things off with `yarn build && yarn start`.
-  - In the `backend/`, a simple `yarn start` will do the trick.
+  - For the `backend/`, get things rolling with `yarn build && yarn start:prod`.
 
 Oh, and make sure that puppeteer plays nice on your machine.
 
