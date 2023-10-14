@@ -5,7 +5,7 @@ export default function Home() {
     <div className="flex flex-col min-h-screen bg-gradient-to-br from-green-400 to-blue-500">
       <div className="mt-16">
         <h1 className="text-4xl font-bold text-center text-white">
-          Web Scraping Services API
+          Web Scraping API
         </h1>
       </div>
 
