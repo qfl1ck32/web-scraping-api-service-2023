@@ -1,6 +1,6 @@
 import axios from "axios";
 import Image from "next/image";
-import { Fragment, useMemo, useState } from "react";
+import { Fragment, useCallback, useState } from "react";
 import { toast } from "react-toastify";
 
 import { Button } from "@app/components/Button/Button.component";
@@ -13,62 +13,65 @@ export const ScraperContainer: React.FC = () => {
   const [isLoading, startLoading, stopLoading] = useLoading();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [data, setData] = useState<unknown>(null);
+  const [data, setData] = useState<unknown>();
   const [url, setUrl] = useState<string | null>(null);
   const [screenshotImage, setScreenshotImage] = useState<string | null>(null);
 
   const scraperService = useScraperService();
 
-  const onSubmit: OnSubmit = useMemo(() => {
-    return async (input) => {
-      startLoading();
-      setUrl(input.url);
-      setData(null);
+  const onSubmit: OnSubmit = useCallback(async (input) => {
+    startLoading();
+    setUrl(input.url);
+    setData(null);
 
-      toast.info("Checking the website...");
+    toast.info("Checking the website...");
 
-      try {
-        const screenshotImage = await scraperService.getScreenshot(input.url);
+    try {
+      const screenshotImage = await scraperService.getScreenshot(input.url);
 
-        setScreenshotImage(`data:image/png;base64,${screenshotImage}`);
-        setIsModalOpen(true);
+      setScreenshotImage(`data:image/png;base64,${screenshotImage}`);
+      setIsModalOpen(true);
 
-        toast.success("The connection to the website was successful.");
-      } catch (error) {
-        if (axios.isAxiosError(error) && error.response) {
-          toast.error(error.response.data.message);
-        }
-      } finally {
-        stopLoading();
+      toast.success("The connection to the website was successful.");
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response) {
+        toast.error(error.response.data.message);
       }
-    };
+    } finally {
+      stopLoading();
+    }
   }, []);
 
-  const onScrape = useMemo(() => {
-    return async () => {
-      startLoading();
+  const onScrape = useCallback(async () => {
+    startLoading();
+    setIsModalOpen(false);
+    setUrl(null);
+    setData(null);
+
+    toast.info("Scraping the website...");
+
+    try {
+      const data = await scraperService.scrape(url as string);
+
+      setData(data);
       setIsModalOpen(false);
-      setUrl(null);
-      setData(null);
 
-      toast.info("Scraping the website...");
-
-      try {
-        const data = await scraperService.scrape(url as string);
-
-        setData(data);
-        setIsModalOpen(false);
-
-        toast.success("The website was successfully scraped.");
-      } catch (error) {
-        if (axios.isAxiosError(error) && error.response) {
-          toast.error(error.response.data.message);
-        }
-      } finally {
-        stopLoading();
+      toast.success("The website was successfully scraped.");
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response) {
+        toast.error(error.response.data.message);
       }
-    };
+    } finally {
+      stopLoading();
+    }
   }, [url]);
+
+  const onExport = useCallback(async () => {
+    scraperService.downloadJson(
+      data,
+      `scraped_data_${new Date().toISOString()}.json`
+    );
+  }, [data]);
 
   return (
     <Fragment>
@@ -76,6 +79,7 @@ export const ScraperContainer: React.FC = () => {
         {...{
           onSubmit,
           isLoading,
+          onExport,
           data,
         }}
       />

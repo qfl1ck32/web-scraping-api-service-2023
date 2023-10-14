@@ -11,6 +11,8 @@ export type OnSubmit = SubmitHandler<yup.InferType<typeof schema>>;
 
 export interface IScrapeComponentProps {
   onSubmit: OnSubmit;
+  onExport: () => void;
+
   isLoading: boolean;
 
   data?: unknown;
@@ -18,6 +20,8 @@ export interface IScrapeComponentProps {
 
 export const Scraper: React.FC<IScrapeComponentProps> = ({
   onSubmit,
+  onExport,
+
   data,
   isLoading,
 }) => {
@@ -27,7 +31,12 @@ export const Scraper: React.FC<IScrapeComponentProps> = ({
 
       {data == null ? null : (
         <div className="mt-28">
-          <JsonViewer data={data} />
+          <JsonViewer
+            data={data}
+            toolbar={{
+              onExport,
+            }}
+          />
         </div>
       )}
     </Fragment>
