@@ -36,6 +36,13 @@ export class BrowserService {
     }
   }
 
+  /**
+   * Takes a screenshot of a given URL using Puppeteer.
+   *
+   * @param {string} url - The URL of the website to take a screenshot of.
+   * @returns {Promise<string>} A promise that resolves to the screenshot of the website as a Buffer.
+   * @throws {WebsiteCouldNotBeReachedException} Throws an exception if the website cannot be reached or other Puppeteer errors.
+   */
   public async getScreenshot(url: string): Promise<Buffer> {
     try {
       const browser = await puppeteer.launch({
