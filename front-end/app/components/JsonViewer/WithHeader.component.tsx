@@ -4,6 +4,7 @@ import DownArrow from "@app/assets/svgs/down-arrow.svg";
 import RightArrow from "@app/assets/svgs/right-arrow.svg";
 
 import { useJsonViewer } from "./context";
+import { formatItemCount } from "./utils";
 import { WithToolbar } from "./WithToolbar";
 
 export const WithHeader: React.FC<{
@@ -39,7 +40,9 @@ export const WithHeader: React.FC<{
             {`"${keyName}"`}:
             {itemType === "array" ? " [" : itemType === "object" ? " {" : " "}{" "}
             {!isOpen && ` ... ${itemType === "array" ? "]" : "}"}`}{" "}
-            <span className="text-gray-600 text-xs">{itemCount} Items</span>
+            <span className="text-gray-600 text-xs">
+              {formatItemCount(itemCount)}
+            </span>
           </WithToolbar>
         </div>
       </div>
