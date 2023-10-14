@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 
 import checkmarkSvg from "@app/assets/svgs/checkmark.svg";
 import copySvg from "@app/assets/svgs/copy.svg";
@@ -13,10 +13,10 @@ export const WithToolbar: React.FC<IWithToolbarProps> = ({
   content,
   children,
 }) => {
-  const [showCopyIcon, setShowCopyIcon] = useState(false);
+  const [showIcons, setShowIcons] = useState(false);
   const [hasCopied, setHasCopied] = useState(false);
 
-  const handleCopyClick = () => {
+  const handleCopyClick = useCallback(() => {
     navigator.clipboard.writeText(JSON.stringify(content, null, 4));
 
     setHasCopied(true);
@@ -24,37 +24,44 @@ export const WithToolbar: React.FC<IWithToolbarProps> = ({
     setTimeout(() => {
       setHasCopied(false);
     }, 1000);
-  };
+  }, []);
 
   return (
     <div
-      onMouseEnter={() => setShowCopyIcon(true)}
-      onMouseLeave={() => setShowCopyIcon(false)}
+      onMouseEnter={() => setShowIcons(true)}
+      onMouseLeave={() => setShowIcons(false)}
       style={{
         position: "relative",
         display: "inline-block",
-        paddingRight: "20px",
+        paddingRight: "30px",
       }}
     >
       {children}
-      {showCopyIcon && (
-        <span
-          onClick={handleCopyClick}
+      {showIcons && (
+        <div
           style={{
             position: "absolute",
             top: "50%",
             right: 0,
             transform: "translateY(-50%)",
-            cursor: hasCopied ? "auto" : "pointer",
+            display: "flex",
+            gap: "10px",
           }}
         >
-          <Image
-            src={hasCopied ? checkmarkSvg : copySvg}
-            alt="Copy"
-            width={16}
-            height={16}
-          />
-        </span>
+          <span
+            onClick={handleCopyClick}
+            style={{
+              cursor: hasCopied ? "auto" : "pointer",
+            }}
+          >
+            <Image
+              src={hasCopied ? checkmarkSvg : copySvg}
+              alt="Copy"
+              width={16}
+              height={16}
+            />
+          </span>
+        </div>
       )}
     </div>
   );
