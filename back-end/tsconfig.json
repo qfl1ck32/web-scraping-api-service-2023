@@ -9,6 +9,7 @@
     "target": "es2021",
     "sourceMap": true,
     "outDir": "./dist",
+    "rootDir": "./src",
     "incremental": true,
     "skipLibCheck": true,
     "strictNullChecks": false,
@@ -21,6 +22,8 @@
     "baseUrl": "./",
     "paths": {
       "@src/*": ["src/*"]
-    }
-  }
+    },
+  },
+
+  "include": ["src/**/*.ts"]
 }
