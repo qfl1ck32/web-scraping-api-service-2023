@@ -1,4 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
+
 import { BrowserController } from './browser.controller';
 
 describe('BrowserController', () => {

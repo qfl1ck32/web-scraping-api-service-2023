@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 
-import { BrowserService } from './browser.service';
 import { BrowserController } from './browser.controller';
+import { BrowserService } from './browser.service';
 
 @Module({
   providers: [BrowserService],
