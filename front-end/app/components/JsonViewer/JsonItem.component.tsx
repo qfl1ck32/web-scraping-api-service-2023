@@ -88,7 +88,7 @@ export const JsonItem: React.FC<{
 
   const DisplayContent = (
     <>
-      {keyName}: {displayValue}
+      {`"${keyName}":`} {displayValue}
     </>
   );
 
